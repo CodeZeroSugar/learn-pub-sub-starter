@@ -14,7 +14,7 @@ func SubscribeJSON[T any](
 	queueName,
 	key string,
 	queueType SimpleQueueType,
-	handler func(T),
+	handler func(T) AckType,
 ) error {
 	ch, _, err := DeclareAndBind(
 		conn,
@@ -47,9 +47,20 @@ func SubscribeJSON[T any](
 			if err = json.Unmarshal(data, &body); err != nil {
 				log.Printf("failed to unmarshal json:%s", err)
 			}
-			handler(body)
+			ack := handler(body)
 
-			delivery.Ack(false)
+			switch ack {
+			case ACK:
+				delivery.Ack(false)
+				log.Printf("Ack occurred.")
+			case NACK_REQUEUE:
+				delivery.Nack(false, true)
+				log.Printf("NackRequeue occurred.")
+			case NACK_DISCARD:
+				delivery.Nack(false, false)
+				log.Printf("NackDiscard occurred.")
+			}
+
 		}
 	}()
 
