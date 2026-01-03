@@ -71,9 +71,20 @@ func main() {
 		connection,
 		string(routing.ExchangePerilTopic),
 		string(routing.ArmyMovesPrefix)+"."+username,
-		string(routing.ArmyMovesPrefix),
+		string(routing.ArmyMovesPrefix)+".*",
 		pubsub.TRANSIENT,
-		handlerMove(gamestate),
+		handlerMove(gamestate, ch),
+	); err != nil {
+		log.Printf("failed to subscribe json: %s", err)
+	}
+
+	if err = pubsub.SubscribeJSON(
+		connection,
+		string(routing.ExchangePerilTopic),
+		"war",
+		string(routing.WarRecognitionsPrefix)+".#",
+		pubsub.DURABLE,
+		handlerWar(gamestate),
 	); err != nil {
 		log.Printf("failed to subscribe json: %s", err)
 	}
@@ -99,7 +110,7 @@ Loop:
 			if err = pubsub.PublishJSON(
 				ch,
 				string(routing.ExchangePerilTopic),
-				string(routing.ArmyMovesPrefix),
+				string(routing.ArmyMovesPrefix)+"."+username,
 				move,
 			); err != nil {
 				log.Printf("failed to publish move: %s", err)

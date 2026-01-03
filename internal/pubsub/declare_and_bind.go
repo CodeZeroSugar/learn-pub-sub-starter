@@ -24,13 +24,16 @@ func DeclareAndBind(
 	if err != nil {
 		return &amqp.Channel{}, amqp.Queue{}, fmt.Errorf("failed to create channel from connection: %w", err)
 	}
+
+	deadLetter := amqp.Table{"x-dead-letter-exchange": "peril_dlx"}
+
 	q, err := c.QueueDeclare(
 		queueName,
 		queueType == DURABLE,
 		queueType == TRANSIENT,
 		queueType == TRANSIENT,
 		false,
-		nil)
+		deadLetter)
 	if err != nil {
 		return &amqp.Channel{}, amqp.Queue{}, fmt.Errorf("failed to create queue from connection: %w", err)
 	}
