@@ -59,9 +59,9 @@ func main() {
 
 	if err = pubsub.SubscribeJSON(
 		connection,
-		string(routing.ExchangePerilDirect),
-		string(routing.PauseKey)+"."+username,
-		string(routing.PauseKey),
+		routing.ExchangePerilDirect,
+		routing.PauseKey+"."+username,
+		routing.PauseKey,
 		pubsub.TRANSIENT,
 		handlerPause(gamestate),
 	); err != nil {
@@ -69,9 +69,9 @@ func main() {
 	}
 	if err = pubsub.SubscribeJSON(
 		connection,
-		string(routing.ExchangePerilTopic),
-		string(routing.ArmyMovesPrefix)+"."+username,
-		string(routing.ArmyMovesPrefix)+".*",
+		routing.ExchangePerilTopic,
+		routing.ArmyMovesPrefix+"."+username,
+		routing.ArmyMovesPrefix+".*",
 		pubsub.TRANSIENT,
 		handlerMove(gamestate, ch),
 	); err != nil {
@@ -80,11 +80,11 @@ func main() {
 
 	if err = pubsub.SubscribeJSON(
 		connection,
-		string(routing.ExchangePerilTopic),
+		routing.ExchangePerilTopic,
 		"war",
-		string(routing.WarRecognitionsPrefix)+".#",
+		routing.WarRecognitionsPrefix+".#",
 		pubsub.DURABLE,
-		handlerWar(gamestate),
+		handlerWar(gamestate, ch),
 	); err != nil {
 		log.Printf("failed to subscribe json: %s", err)
 	}
