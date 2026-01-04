@@ -6,7 +6,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func SubscribeJSON[T any](
+func SubscribeGob[T any](
 	conn *amqp.Connection,
 	exchange,
 	queueName,
@@ -24,7 +24,7 @@ func SubscribeJSON[T any](
 		unmarshaller,
 	)
 	if err != nil {
-		return fmt.Errorf("failure during subscribe json: %w", err)
+		return fmt.Errorf("failure during subscribe gob: %w", err)
 	}
 	return nil
 }

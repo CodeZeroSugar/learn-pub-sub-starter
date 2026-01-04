@@ -40,6 +40,18 @@ func main() {
 		log.Printf("server failed to declare and bind: %s", err)
 	}
 
+	err = pubsub.SubscribeGob(
+		connection,
+		routing.ExchangePerilTopic,
+		routing.GameLogSlug,
+		routing.GameLogSlug+".*",
+		pubsub.DURABLE,
+		handlerLogs(),
+	)
+	if err != nil {
+		log.Printf("and error happened trying to receive gamelogs: %s", err)
+	}
+
 Loop:
 	for {
 		input := gamelogic.GetInput()
