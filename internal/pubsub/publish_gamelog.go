@@ -8,7 +8,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func PublishGameLog(ch *amqp.Channel, key, username, message string) error {
+func PublishGameLog(ch *amqp.Channel, exchange, key, username, message string) error {
 	gL := routing.GameLog{
 		CurrentTime: time.Now(),
 		Message:     message,
@@ -17,7 +17,7 @@ func PublishGameLog(ch *amqp.Channel, key, username, message string) error {
 
 	err := PublishGob(
 		ch,
-		string(routing.ExchangePerilTopic),
+		exchange,
 		key,
 		gL,
 	)

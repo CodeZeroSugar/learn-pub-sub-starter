@@ -27,6 +27,14 @@ func subscribe[T any](
 		return fmt.Errorf("failed to declare and bind: %w", err)
 	}
 
+	if err = ch.Qos(
+		10,
+		0,
+		false,
+	); err != nil {
+		return fmt.Errorf("qos failed for channel: %w", err)
+	}
+
 	deliveryChan, err := ch.Consume(
 		queueName,
 		"",

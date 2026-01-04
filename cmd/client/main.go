@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/gamelogic"
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/pubsub"
@@ -123,7 +124,30 @@ Loop:
 		case "help":
 			gamelogic.PrintClientHelp()
 		case "spam":
-			log.Printf("Spamming not allowed yet!")
+			if len(input) == 1 {
+				log.Printf("Spam command requires an integer argument...")
+				break
+			}
+			num, err := strconv.Atoi(input[1])
+			if err != nil {
+				log.Printf("failed to convert spam argument to integer...")
+				break
+			}
+
+			for i := 0; i <= num; i++ {
+				spamMessage := gamelogic.GetMaliciousLog()
+				err = pubsub.PublishGameLog(
+					ch,
+					routing.ExchangePerilTopic,
+					routing.GameLogSlug+"."+username,
+					username,
+					spamMessage,
+				)
+				if err != nil {
+					log.Printf("failed to publish spam to game log: %s", err)
+				}
+			}
+
 		case "quit":
 			gamelogic.PrintQuit()
 			break Loop

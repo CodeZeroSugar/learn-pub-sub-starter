@@ -22,6 +22,7 @@ func handlerWar(gs *gamelogic.GameState, ch *amqp.Channel) func(gamelogic.Recogn
 			outcomeString := fmt.Sprintf("%s won a war against %s", winner, loser)
 			err := pubsub.PublishGameLog(
 				ch,
+				routing.ExchangePerilTopic,
 				routing.GameLogSlug+".#",
 				gs.Player.Username,
 				outcomeString,
@@ -34,6 +35,7 @@ func handlerWar(gs *gamelogic.GameState, ch *amqp.Channel) func(gamelogic.Recogn
 			outcomeString := fmt.Sprintf("%s won a war against %s", winner, loser)
 			err := pubsub.PublishGameLog(
 				ch,
+				routing.ExchangePerilTopic,
 				routing.GameLogSlug+"."+gs.Player.Username,
 				gs.Player.Username,
 				outcomeString,
@@ -46,6 +48,7 @@ func handlerWar(gs *gamelogic.GameState, ch *amqp.Channel) func(gamelogic.Recogn
 			outcomeString := fmt.Sprintf("A war between %s and %s resulted in a draw", winner, loser)
 			err := pubsub.PublishGameLog(
 				ch,
+				routing.ExchangePerilTopic,
 				routing.GameLogSlug+"."+gs.Player.Username,
 				gs.Player.Username,
 				outcomeString,
